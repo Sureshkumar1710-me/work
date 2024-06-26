@@ -1,2 +1,20 @@
-global_data[:, 1:3] = global_data[:, 1:3].astype(float)  # Columns 2 and 3 as float
-global_data[:, 4] = global_data[:, 4].astype(int)       # Column 5 (index 4) as int
+def concatenate_audio_segments(data):
+    concatenated_audio = np.array([], dtype=np.float32)  # Initialize an empty array for concatenated audio
+    for row in data:
+        file_name = row[0]
+        start_time = float(row[1])
+        end_time = float(row[3])
+        
+        # Read audio segment from start_time to end_time
+        audio_data, rate = sf.read(file_name, start=int(start_time * rate), stop=int(end_time * rate))
+        
+        # Concatenate segment to concatenated_audio
+        concatenated_audio = np.concatenate((concatenated_audio, audio_data))
+    
+    return concatenated_audio
+
+# Concatenate audio segments from speaker_0_data
+concatenated_audio = concatenate_audio_segments(speaker_0_data)
+
+# Print the shape of concatenated audio data
+print("Shape of concatenated audio:", concatenated_audio.shape)
