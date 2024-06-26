@@ -1,13 +1,18 @@
-speaker_col_index = 4  # Adjust this index if necessary
+speaker_0_data = []
+speaker_1_data = []
 
-# Convert speaker column to integer (if not already)
-global_data[:, speaker_col_index] = global_data[:, speaker_col_index].astype(int)
+# Traverse through global_data and append rows based on 'Speaker' value
+for row in global_data:
+    if row[4] == 0:
+        speaker_0_data.append(row)
+    elif row[4] == 1:
+        speaker_1_data.append(row)
 
-# Filter data based on Speaker values
-speaker_0_data = global_data[global_data[:, speaker_col_index] == 0]
-speaker_1_data = global_data[global_data[:, speaker_col_index] == 1]
+# Convert lists to NumPy arrays (if needed)
+speaker_0_data = np.array(speaker_0_data)
+speaker_1_data = np.array(speaker_1_data)
 
-# Example usage or further processing
+# Print filtered data
 print("\nSpeaker 0 data:")
 print(speaker_0_data)
 
