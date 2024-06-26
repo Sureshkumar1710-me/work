@@ -1,65 +1,31 @@
-import os
-import soundfile as sf
 import numpy as np
 
-# Example speaker_0_data (replace this with your actual data)
-speaker_0_data = np.array([
-    ['audio1.wav', 0.0, 10.0, 10.0, 0],
-    ['audio2.wav', 5.0, 15.0, 15.0, 0],
-    ['audio3.wav', 20.0, 30.0, 30.0, 0]
-])
+def reshape_to_3d(matrix, segment_size):
+    m, n = matrix.shape
+    assert n == 4, "Input matrix must have 4 columns."
 
-# Function to concatenate audio segments from speaker_0_data for a given WAV file
-def concatenate_audio_for_file(file_path, data):
-    concatenated_audio = np.array([], dtype=np.float32).reshape(0, 4)  # Initialize an empty array for concatenated audio
-    rate = None  # Initialize sampling rate
-    
-    # Read the entire WAV file
-    audio_data, rate = sf.read(file_path)
-    
-    # Check if audio_data is 2D or 3D and reshape if necessary
-    if len(audio_data.shape) == 2:
-        audio_data = audio_data.reshape(1, -1, 4)  # Reshape to (1, samples, channels)
-    
-    # Iterate through speaker_0_data to find matching filename and concatenate segments
-    for row in data:
-        file_name = row[0]
-        start_time = float(row[1])
-        end_time = float(row[3])
-        
-        if file_name == os.path.basename(file_path):  # Check if filename matches
-            # Calculate indices for start and end times
-            start_index = int(start_time * rate)
-            end_index = int(end_time * rate)
-            
-            # Extract segment and concatenate
-            segment = audio_data[0, start_index:end_index, :]
-            concatenated_audio = np.vstack((concatenated_audio, segment))
-    
-    return concatenated_audio
+    # Calculate the number of full segments
+    num_segments = m // segment_size
 
-# Function to traverse through a folder and process each WAV file
-def process_wav_folder(folder_path, data):
-    final_concatenated_audio = np.array([], dtype=np.float32).reshape(0, 4)  # Initialize an empty array for final concatenated audio
-    
-    # Iterate through files in the folder
-    for filename in os.listdir(folder_path):
-        if filename.endswith('.wav'):
-            file_path = os.path.join(folder_path, filename)
-            
-            # Concatenate audio segments for current file
-            concatenated_audio = concatenate_audio_for_file(file_path, data)
-            
-            # Append to the final concatenated audio array
-            final_concatenated_audio = np.vstack((final_concatenated_audio, concatenated_audio))
-    
-    return final_concatenated_audio
+    # Calculate the number of samples to keep
+    keep_size = num_segments * segment_size
 
-# Example usage: Replace 'folder_path' with your actual folder containing WAV files
-folder_path = 'path/to/your/wav/folder'
-final_concatenated_audio = process_wav_folder(folder_path, speaker_0_data)
+    # Trim the matrix to the keep_size
+    trimmed_matrix = matrix[:keep_size, :]
 
-# Print the shape of the final concatenated audio data
-print("Shape of final concatenated audio:", final_concatenated_audio.shape)
+    # Reshape to 3D matrix of size (num_segments, segment_size, 4)
+    reshaped_matrix = trimmed_matrix.reshape(num_segments, segment_size, n)
 
-# You can save or further process 'final_concatenated_audio' as needed
+    return reshaped_matrix
+
+# Example usage:
+# Create an example matrix of size (m, 4)
+m = 623983
+k = 51200  # Adjust segment_size as needed
+matrix = np.random.randn(m, 4).astype(np.float32)  # Example data
+
+# Reshape the matrix to 3D
+reshaped_matrix = reshape_to_3d(matrix, k)
+
+# Print the shape of the reshaped matrix
+print("Shape of reshaped matrix:", reshaped_matrix.shape)
