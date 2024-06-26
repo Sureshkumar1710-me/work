@@ -1,20 +1,61 @@
-def concatenate_audio_segments(data):
+import os
+import soundfile as sf
+import numpy as np
+
+# Example speaker_0_data (replace this with your actual data)
+speaker_0_data = np.array([
+    ['audio1.wav', 0.0, 10.0, 10.0, 0],
+    ['audio2.wav', 5.0, 15.0, 15.0, 0],
+    ['audio3.wav', 20.0, 30.0, 30.0, 0]
+])
+
+# Function to concatenate audio segments from speaker_0_data for a given WAV file
+def concatenate_audio_for_file(file_path, data):
     concatenated_audio = np.array([], dtype=np.float32)  # Initialize an empty array for concatenated audio
+    rate = None  # Initialize sampling rate
+    
+    # Read the entire WAV file
+    audio_data, rate = sf.read(file_path)
+    
+    # Iterate through speaker_0_data to find matching filename and concatenate segments
     for row in data:
         file_name = row[0]
         start_time = float(row[1])
         end_time = float(row[3])
         
-        # Read audio segment from start_time to end_time
-        audio_data, rate = sf.read(file_name, start=int(start_time * rate), stop=int(end_time * rate))
-        
-        # Concatenate segment to concatenated_audio
-        concatenated_audio = np.concatenate((concatenated_audio, audio_data))
+        if file_name == os.path.basename(file_path):  # Check if filename matches
+            # Calculate indices for start and end times
+            start_index = int(start_time * rate)
+            end_index = int(end_time * rate)
+            
+            # Concatenate segment to concatenated_audio
+            concatenated_audio = np.concatenate((concatenated_audio, audio_data[start_index:end_index]))
     
     return concatenated_audio
 
-# Concatenate audio segments from speaker_0_data
-concatenated_audio = concatenate_audio_segments(speaker_0_data)
+# Function to traverse through a folder and process each WAV file
+def process_wav_folder(folder_path, data):
+    concatenated_data = {}  # Dictionary to store concatenated data for each WAV file
+    
+    # Iterate through files in the folder
+    for filename in os.listdir(folder_path):
+        if filename.endswith('.wav'):
+            file_path = os.path.join(folder_path, filename)
+            
+            # Concatenate audio segments for current file
+            concatenated_audio = concatenate_audio_for_file(file_path, data)
+            
+            # Store concatenated audio data in dictionary
+            concatenated_data[filename] = concatenated_audio
+    
+    return concatenated_data
 
-# Print the shape of concatenated audio data
-print("Shape of concatenated audio:", concatenated_audio.shape)
+# Example usage: Replace 'folder_path' with your actual folder containing WAV files
+folder_path = 'path/to/your/wav/folder'
+concatenated_data = process_wav_folder(folder_path, speaker_0_data)
+
+# Example print or further processing with concatenated_data
+for filename, audio_data in concatenated_data.items():
+    print(f"Filename: {filename}, Shape: {audio_data.shape}")
+
+# You can save or further process 'concatenated_data' as needed
