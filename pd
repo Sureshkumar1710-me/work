@@ -1,0 +1,38 @@
+import pandas as pd
+import scipy.io.wavfile as sf
+
+# Load your CSV file into a DataFrame
+csv_file = 'path/to/your/csv/file.csv'
+df = pd.read_csv(csv_file, delimiter='\t')
+
+# Initialize an empty list to store audio segments
+audio_segments = []
+
+# Iterate through each row in the DataFrame
+for index, row in df.iterrows():
+    audio_file = row['Audio File Name']
+    start_time = row['Start Time']
+    end_time = row['End Time']
+    
+    # Calculate start and end indices based on the times
+    sample_rate, audio_data = sf.read(audio_file)
+    start_index = int(start_time * sample_rate)
+    end_index = int(end_time * sample_rate)
+    
+    # Extract audio segment
+    segment = audio_data[start_index:end_index]
+    
+    # Append segment and relevant info to a dictionary or DataFrame
+    audio_segments.append({
+        'Audio File Name': audio_file,
+        'Start Time': start_time,
+        'End Time': end_time,
+        'Audio Segment': segment
+    })
+
+# Create a new DataFrame from the list of audio segments
+audio_df = pd.DataFrame(audio_segments)
+
+# Now you have a DataFrame 'audio_df' containing columns:
+# 'Audio File Name', 'Start Time', 'End Time', and 'Audio Segment'
+# with each row representing a segment of audio.
