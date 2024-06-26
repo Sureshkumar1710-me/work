@@ -1,20 +1,2 @@
-speaker_0_data = []
-speaker_1_data = []
-
-# Traverse through global_data and append rows based on 'Speaker' value
-for row in global_data:
-    if row[4] == 0:
-        speaker_0_data.append(row)
-    elif row[4] == 1:
-        speaker_1_data.append(row)
-
-# Convert lists to NumPy arrays (if needed)
-speaker_0_data = np.array(speaker_0_data)
-speaker_1_data = np.array(speaker_1_data)
-
-# Print filtered data
-print("\nSpeaker 0 data:")
-print(speaker_0_data)
-
-print("\nSpeaker 1 data:")
-print(speaker_1_data)
+global_data[:, 1:3] = global_data[:, 1:3].astype(float)  # Columns 2 and 3 as float
+global_data[:, 4] = global_data[:, 4].astype(int)       # Column 5 (index 4) as int
