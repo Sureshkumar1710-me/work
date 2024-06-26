@@ -1,0 +1,46 @@
+import pandas as pd
+import os
+
+def parse_rttm_file(file_path):
+    data = []
+    last_end_time = -1 
+    with open(file_path, 'r') as file:
+        for line in file:
+            parts = line.split()
+            if len(parts) > 8:
+                audio_file_name = parts[1]
+                start_time = float(parts[3])
+                duration = float(parts[4])
+                end_time = start_time + duration
+                speaker = int(parts[7])
+
+                
+                if start_time < last_end_time:
+                   
+                    start_time = last_end_time
+                     
+                    duration = end_time - start_time 
+                end_time = start_time + duration
+               
+                if duration > 0:
+                    data.append([audio_file_name, start_time, duration, end_time, speaker])
+                    last_end_time = end_time  
+    return data
+
+def save_to_excel(data, output_file):
+    df = pd.DataFrame(data, columns=['Audio File Name', 'Start Time', 'Duration', 'End Time', 'Speaker'])
+    df.to_excel(output_file, index=False)
+
+def process_rttm_folder(folder_path, output_file):
+    all_data = []
+    for file_name in os.listdir(folder_path):
+        if file_name.endswith('.rttm'):
+            file_path = os.path.join(folder_path, file_name)
+            file_data = parse_rttm_file(file_path)
+            all_data.extend(file_data)
+    save_to_excel(all_data, output_file)
+
+rttm_folder_path = 'RTTM_DS'
+output_excel_file = 'RTTM_DS/output.xlsx'
+
+process_rttm_folder(rttm_folder_path, output_excel_file)
