@@ -1,8 +1,14 @@
-speaker_0_data = global_data[global_data[:, 4] == 0]  # Assuming Speaker column is at index 4
-speaker_1_data = global_data[global_data[:, 4] == 1]  # Assuming Speaker column is at index 4
+speaker_col_index = 4  # Adjust this index if necessary
+
+# Convert speaker column to integer (if not already)
+global_data[:, speaker_col_index] = global_data[:, speaker_col_index].astype(int)
+
+# Filter data based on Speaker values
+speaker_0_data = global_data[global_data[:, speaker_col_index] == 0]
+speaker_1_data = global_data[global_data[:, speaker_col_index] == 1]
 
 # Example usage or further processing
-print("Speaker 0 data:")
+print("\nSpeaker 0 data:")
 print(speaker_0_data)
 
 print("\nSpeaker 1 data:")
