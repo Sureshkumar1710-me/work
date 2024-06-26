@@ -35,7 +35,7 @@ def concatenate_audio_for_file(file_path, data):
 
 # Function to traverse through a folder and process each WAV file
 def process_wav_folder(folder_path, data):
-    concatenated_data = {}  # Dictionary to store concatenated data for each WAV file
+    final_concatenated_audio = np.array([], dtype=np.float32)  # Initialize an empty array for final concatenated audio
     
     # Iterate through files in the folder
     for filename in os.listdir(folder_path):
@@ -45,17 +45,16 @@ def process_wav_folder(folder_path, data):
             # Concatenate audio segments for current file
             concatenated_audio = concatenate_audio_for_file(file_path, data)
             
-            # Store concatenated audio data in dictionary
-            concatenated_data[filename] = concatenated_audio
+            # Append to the final concatenated audio array
+            final_concatenated_audio = np.concatenate((final_concatenated_audio, concatenated_audio))
     
-    return concatenated_data
+    return final_concatenated_audio
 
 # Example usage: Replace 'folder_path' with your actual folder containing WAV files
 folder_path = 'path/to/your/wav/folder'
-concatenated_data = process_wav_folder(folder_path, speaker_0_data)
+final_concatenated_audio = process_wav_folder(folder_path, speaker_0_data)
 
-# Example print or further processing with concatenated_data
-for filename, audio_data in concatenated_data.items():
-    print(f"Filename: {filename}, Shape: {audio_data.shape}")
+# Print the shape of the final concatenated audio data
+print("Shape of final concatenated audio:", final_concatenated_audio.shape)
 
-# You can save or further process 'concatenated_data' as needed
+# You can save or further process 'final_concatenated_audio' as needed
