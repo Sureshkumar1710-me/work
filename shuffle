@@ -1,0 +1,5 @@
+indices = np.arange(data.shape[0])
+np.random.shuffle(indices)
+
+shuffled_data = data[indices]
+shuffled_labels = labels[indices]
