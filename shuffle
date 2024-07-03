@@ -1,5 +1,9 @@
-indices = np.arange(data.shape[0])
-np.random.shuffle(indices)
-
-shuffled_data = data[indices]
-shuffled_labels = labels[indices]
+# Plot loss
+plt.subplot(1, 2, 2)
+plt.plot(history.history['loss'], label='loss')
+plt.plot(history.history['val_loss'], label = 'val_loss')
+plt.xlabel('Epoch')
+plt.ylabel('Loss')
+plt.ylim([0, max(history.history['loss'])])
+plt.legend(loc='upper right')
+plt.title('Training and Validation Loss')
