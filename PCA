@@ -24,3 +24,41 @@ plt.ylabel('Principal Component 2')
 plt.title('PCA of Data1 and Data2')
 plt.legend()
 plt.show()
+
+
+
+
+import numpy as np
+import plotly.express as px
+from sklearn.decomposition import PCA
+
+# Assuming data1 and data2 are your numpy arrays of shape (n, 10) and (m, 10) respectively
+data1 = np.random.rand(100, 10)  # Example data, replace with your actual data
+data2 = np.random.rand(80, 10)   # Example data, replace with your actual data
+
+# Create a PCA object to reduce to 3 dimensions
+pca = PCA(n_components=3)
+
+# Fit and transform the data
+data1_pca = pca.fit_transform(data1)
+data2_pca = pca.fit_transform(data2)
+
+# Combine the datasets for plotting
+data1_labels = np.array(['Data 1'] * data1_pca.shape[0])
+data2_labels = np.array(['Data 2'] * data2_pca.shape[0])
+combined_data = np.vstack((data1_pca, data2_pca))
+combined_labels = np.hstack((data1_labels, data2_labels))
+
+# Create a DataFrame for easier plotting with Plotly
+import pandas as pd
+df = pd.DataFrame(combined_data, columns=['PC1', 'PC2', 'PC3'])
+df['Label'] = combined_labels
+
+# Create the 3D scatter plot
+fig = px.scatter_3d(df, x='PC1', y='PC2', z='PC3', color='Label', title='PCA of Data1 and Data2')
+
+# Save the plot as an HTML file
+fig.write_html('pca_plot.html')
+
+# Optionally, display the plot in a Jupyter Notebook
+fig.show()
