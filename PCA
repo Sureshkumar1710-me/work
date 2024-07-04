@@ -15,8 +15,8 @@ data2_pca = pca.fit_transform(data2)
 
 # Plot the results
 plt.figure(figsize=(10, 6))
-plt.scatter(data1_pca[:, 0], data1_pca[:, 1], label='Data 1', alpha=0.7)
-plt.scatter(data2_pca[:, 0], data2_pca[:, 1], label='Data 2', alpha=0.7)
+plt.scatter(data1_pca[:, 0], data1_pca[:, 1], label='Data 1', alpha=0.7, color='blue')
+plt.scatter(data2_pca[:, 0], data2_pca[:, 1], label='Data 2', alpha=0.7, color='red')
 
 # Add labels and legend
 plt.xlabel('Principal Component 1')
