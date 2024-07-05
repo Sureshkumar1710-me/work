@@ -1,9 +1,16 @@
-# Calculate the ROC curve and AUC for each class
+# Convert one-hot encoded labels back to integer labels
+y_test_labels = np.argmax(y_test, axis=1)
+
+# Calculate the ROC curve and AUC for each class using the one-vs-rest approach
 fpr = dict()
 tpr = dict()
 roc_auc = dict()
 for i in range(3):
-    fpr[i], tpr[i], _ = roc_curve(y_test[:, i], y_prob[:, i])
+    # Binarize the true labels and the predicted probabilities for the current class
+    y_test_bin = (y_test_labels == i).astype(int)
+    y_prob_bin = y_prob[:, i]
+
+    fpr[i], tpr[i], _ = roc_curve(y_test_bin, y_prob_bin)
     roc_auc[i] = auc(fpr[i], tpr[i])
 
 # Plot the ROC curves
